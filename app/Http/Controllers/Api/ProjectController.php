@@ -19,7 +19,7 @@ class ProjectController extends Controller
             if ($project->hasUploadedImage()) $project->image_url = url('storage/' . $project->image_url);
         }
 
-        return response()->json(compact('projects'));
+        return response()->json($projects);
     }
 
     /**
