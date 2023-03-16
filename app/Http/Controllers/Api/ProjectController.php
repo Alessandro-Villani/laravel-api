@@ -38,6 +38,8 @@ class ProjectController extends Controller
         $project = Project::with('type', 'technologies')->where('is_published', true)->find($id);
         if (!$project) return response(null, 404);
 
+        if ($project->hasUploadedImage()) $project->image_url = url('storage/' . $project->image_url);
+
         return response()->json($project);
     }
 
