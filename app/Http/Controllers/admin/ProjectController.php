@@ -5,11 +5,14 @@ namespace App\Http\Controllers\admin;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Mail\PublishedProjectMail;
 use App\Models\Technology;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use App\Models\Type;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class ProjectController extends Controller
 {
@@ -158,6 +161,12 @@ class ProjectController extends Controller
         $message = $project->is_published ? 'è stato pubblicato con successo.' : 'è stato spostato in bozze.';
 
         $project->save();
+
+        if ($project->is_published) {
+            $mail = new PublishedProjectMail($project);
+            $address = Auth::user()->email;
+            Mail::to($address)->send($mail);
+        }
 
         return redirect()->back()->with('message', "Il progetto <strong>" . strtoupper($project->name) . "</strong> " . $message)->with('type', 'success');
     }
